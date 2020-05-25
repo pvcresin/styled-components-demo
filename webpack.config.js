@@ -1,33 +1,38 @@
-const webpack = require("webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
-const outputPath = path.resolve(__dirname, "dist");
 
 module.exports = {
   context: __dirname + "/src",
   entry: path.resolve(__dirname, "src/index.js"),
   output: {
-    path: outputPath,
-    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+    filename: "index.js",
   },
   devServer: {
-    contentBase: outputPath,
+    contentBase: path.resolve(__dirname, "dist"),
   },
   module: {
     rules: [
       {
         test: /\.js$/i,
         exclude: /node_modules/,
-        loader: "babel-loader",
-        query: {
-          presets: ["@babel/preset-react"],
-        },
-      },
-      {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-react"],
+              plugins: [
+                [
+                  "babel-plugin-styled-components",
+                  {
+                    ssr: false,
+                    displayName: true,
+                  },
+                ],
+              ],
+            },
+          },
+        ],
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin()],
 };
